@@ -14,8 +14,9 @@ public class TagCloudVisualizer(TagCloudVisualizerOptions options) : ITagCloudVi
 		var imageInfo = new SKImageInfo(
 			width: (int)Math.Round(boundingRectangle.Width + 2 * options.PictureBorderSize),
 			height: (int)Math.Round(boundingRectangle.Height + 2 * options.PictureBorderSize),
-			colorType: SKColorType.Rgb888x,
+			colorType: SKColorType.Rgba8888,
 			alphaType: SKAlphaType.Opaque);
+
 		using var surface = SKSurface.Create(imageInfo);
 		var canvas = surface.Canvas;
 

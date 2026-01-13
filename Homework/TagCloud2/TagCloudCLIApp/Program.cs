@@ -99,14 +99,7 @@ internal class Program
 
 	private static void SaveTagCloudImage(string path, SKImage image, int? width, int? height, SKEncodedImageFormat format)
 	{
-		var imageInfo = new SKImageInfo(
-			width: width ?? image.Width,
-			height: height ?? image.Height,
-			colorType: SKColorType.Rgb888x,
-			alphaType: SKAlphaType.Opaque);
-
-		using var bitmap = SKBitmap.FromImage(image).Resize(imageInfo, SKFilterQuality.High);
-		using var data = image.Encode(format, 80);
+		using var data = image.Encode(format, 100);
 		using var stream = File.OpenWrite(path);
 		if (data is null)
 			throw new NullReferenceException("Can't encode bitmap");
