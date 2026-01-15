@@ -9,11 +9,16 @@ public class TagCloudVisualizer(TagCloudVisualizerOptions options) : ITagCloudVi
 	{
 		var tagCloud = cloud.ToList();
 		var boundingRectangle = GetBoundingRectangle(tagCloud.Select(t => t.Place));
+
+        if (boundingRectangle.Width + options.PictureBorderSize * 2 > options.Width
+            || boundingRectangle.Height + options.PictureBorderSize * 2 > options.Height)
+            throw new ArgumentException("The tag cloud extends beyond the selected image dimensions.");
+
 		var pictureOrigin = boundingRectangle.Location - new SKSize(options.PictureBorderSize, options.PictureBorderSize);
 
 		var imageInfo = new SKImageInfo(
-			width: (int)Math.Round(boundingRectangle.Width + 2 * options.PictureBorderSize),
-			height: (int)Math.Round(boundingRectangle.Height + 2 * options.PictureBorderSize),
+			width: options.Width ?? (int)Math.Round(boundingRectangle.Width + 2 * options.PictureBorderSize),
+			height: options.Height ?? (int)Math.Round(boundingRectangle.Height + 2 * options.PictureBorderSize),
 			colorType: SKColorType.Rgba8888,
 			alphaType: SKAlphaType.Opaque);
 

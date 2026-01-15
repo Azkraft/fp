@@ -28,8 +28,6 @@ internal class Program
 		SaveTagCloudImage(
 			args.ImageFilePath,
 			image,
-			args.ImageWidth,
-			args.ImageHeight,
 			Enum.Parse<SKEncodedImageFormat>(args.ImageFormat));
 	}
 
@@ -49,7 +47,9 @@ internal class Program
 		builder.RegisterInstance(tagCloudOptions);
 
 		var tagCloudVisualizerOptions = new TagCloudVisualizerOptions(
-			args.PictureBorderSize,
+            args.ImageWidth,
+            args.ImageHeight,
+            args.PictureBorderSize,
 			SKColor.Parse(args.BackgroudColor),
 			args.ForegroundColor is null ? null : SKColor.Parse(args.ForegroundColor));
 		builder.RegisterInstance(tagCloudVisualizerOptions);
@@ -97,7 +97,7 @@ internal class Program
 
 	private static string[] GetWordsFromFile(string path) => File.ReadAllText(path).Split();
 
-	private static void SaveTagCloudImage(string path, SKImage image, int? width, int? height, SKEncodedImageFormat format)
+	private static void SaveTagCloudImage(string path, SKImage image, SKEncodedImageFormat format)
 	{
 		using var data = image.Encode(format, 100);
 		using var stream = File.OpenWrite(path);
