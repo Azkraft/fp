@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using TagCloudLibrary.ResultPattern;
 using static System.Math;
 
 namespace TagCloudLibrary.Layouter;
@@ -11,10 +12,10 @@ public class CircularCloudLayouter(SKPoint center) : ICloudLayouter
     private double angle = 0;
     private readonly List<SKRect> placedRectangles = [];
 
-    public SKRect PutNextRectangle(SKSize rectangleSize)
+    public Result<SKRect> PutNextRectangle(SKSize rectangleSize)
     {
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-            throw new ArgumentException("Recatngle size should be greater then zero", nameof(rectangleSize));
+            return Result.Fail<SKRect>("Recatngle size should be greater then zero");
 
         var rectangle = FindRectangleWithCorrectPosition(rectangleSize);
         placedRectangles.Add(rectangle);

@@ -1,6 +1,8 @@
-﻿namespace TagCloudLibrary.Preprocessor;
+﻿using TagCloudLibrary.ResultPattern;
+
+namespace TagCloudLibrary.Preprocessor;
 
 public interface IWordPreprocessor
 {
-	List<string> Process(IEnumerable<string> words);
+	Result<List<string>> Process(IEnumerable<string> words);
 }

@@ -10,7 +10,7 @@ public class WordPreprocessorTests
 		var preprocessor = new WordPreprocessor(new([]));
 		var words = new List<string> { "мама", "мыла", "раму" };
 
-		var output = preprocessor.Process(words);
+		var output = preprocessor.Process(words).GetValueOrThrow();
 
 		Assert.That(output, Has.Count.EqualTo(words.Count));
 	}
@@ -21,7 +21,7 @@ public class WordPreprocessorTests
 		var preprocessor = new WordPreprocessor(new([PartOfSpeech.Noun]));
 		var words = new List<string> { "мама", "мыла", "раму" };
 
-		var output = preprocessor.Process(words);
+		var output = preprocessor.Process(words).GetValueOrThrow();
 
 		Assert.That(output, Has.Count.EqualTo(0));
 	}

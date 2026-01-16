@@ -1,9 +1,10 @@
 ﻿using SkiaSharp;
 using TagCloudLibrary.Layouter;
+using TagCloudLibrary.ResultPattern;
 
 namespace TagCloudLibrary.Visualizer;
 
 public interface ITagCloudVisualizer
 {
-	SKImage DrawTagCloud(IEnumerable<PlacedText> tagCloud);
+	Result<SKImage> DrawTagCloud(IEnumerable<PlacedText> tagCloud);
 }

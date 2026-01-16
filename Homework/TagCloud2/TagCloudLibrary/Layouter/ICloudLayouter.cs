@@ -1,9 +1,9 @@
 ﻿using SkiaSharp;
-using System.Drawing;
+using TagCloudLibrary.ResultPattern;
 
 namespace TagCloudLibrary.Layouter;
 
 public interface ICloudLayouter
 {
-	SKRect PutNextRectangle(SKSize rectangleSize);
+    Result<SKRect> PutNextRectangle(SKSize rectangleSize);
 }

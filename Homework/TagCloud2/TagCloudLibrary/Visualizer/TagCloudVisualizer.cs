@@ -1,18 +1,19 @@
 ﻿using SkiaSharp;
 using TagCloudLibrary.Layouter;
+using TagCloudLibrary.ResultPattern;
 
 namespace TagCloudLibrary.Visualizer;
 
 public class TagCloudVisualizer(TagCloudVisualizerOptions options) : ITagCloudVisualizer
 {
-	public SKImage DrawTagCloud(IEnumerable<PlacedText> cloud)
+	public Result<SKImage> DrawTagCloud(IEnumerable<PlacedText> cloud)
 	{
 		var tagCloud = cloud.ToList();
 		var boundingRectangle = GetBoundingRectangle(tagCloud.Select(t => t.Place));
 
         if (boundingRectangle.Width + options.PictureBorderSize * 2 > options.Width
             || boundingRectangle.Height + options.PictureBorderSize * 2 > options.Height)
-            throw new ArgumentException("The tag cloud extends beyond the selected image dimensions.");
+            return Result.Fail<SKImage>("The tag cloud extends beyond the selected image dimensions.");
 
 		var pictureOrigin = boundingRectangle.Location - new SKSize(options.PictureBorderSize, options.PictureBorderSize);
 
