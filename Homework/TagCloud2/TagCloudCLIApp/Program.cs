@@ -29,7 +29,7 @@ internal class Program
 		        SaveTagCloudImage(
 			        args.ImageFilePath,
 			        r,
-			        Enum.Parse<SKEncodedImageFormat>(args.ImageFormat)))
+			        args.ImageFormat))
             .OnFail(e => Console.Error.WriteLine($"Critical Error: {e}"));
 	}
 
@@ -38,7 +38,7 @@ internal class Program
         var builder = new ContainerBuilder();
         return RegisterWordPreprocessorOptions(args, builder)
             .Then(_ => Result.OfAction(() => RegisterTagCloudOptions(args, builder)))
-            .Then(_ => Result.OfAction(() => RegisterTagCloudVisualizerOptions(args, builder)))
+            .Then(_ => RegisterTagCloudVisualizerOptions(args, builder))
             .Then(_ =>
             {
 
@@ -51,15 +51,23 @@ internal class Program
             });
     }
 
-    private static void RegisterTagCloudVisualizerOptions(CommandLineArguments args, ContainerBuilder builder)
+    private static Result<None> RegisterTagCloudVisualizerOptions(CommandLineArguments args, ContainerBuilder builder)
     {
+        if (!SKColor.TryParse(args.BackgroudColor, out var backgroundColor))
+            return Result.Fail<None>("Incorrect background color.");
+
+        if (!SKColor.TryParse(args.ForegroundColor, out var foregroundColor))
+            return Result.Fail<None>("Incorrect foreground color.");
+
         var tagCloudVisualizerOptions = new TagCloudVisualizerOptions(
                     args.ImageWidth,
                     args.ImageHeight,
                     args.PictureBorderSize,
-                    SKColor.Parse(args.BackgroudColor),
-                    args.ForegroundColor is null ? null : SKColor.Parse(args.ForegroundColor));
+                    backgroundColor,
+                    args.ForegroundColor is null ? null : foregroundColor);
         builder.RegisterInstance(tagCloudVisualizerOptions);
+
+        return Result.Ok();
     }
 
     private static void RegisterTagCloudOptions(CommandLineArguments args, ContainerBuilder builder)
@@ -81,7 +89,7 @@ internal class Program
             if (partOfSpeech.IsSuccess)
                 uniquePartsOfSpeech.Add(partOfSpeech.GetValueOrThrow());
             else
-                Console.WriteLine($"Warn: {partOfSpeech.Error}");
+                Console.WriteLine($"Warn: {partOfSpeech.Error}.");
         }
 
         var wordPreprocessorOptions = new WordPreprocessorOptions(uniquePartsOfSpeech);
@@ -112,7 +120,7 @@ internal class Program
 			yield return Enum.TryParse<PartOfSpeech>(partOfSpeech, out var result)
 				? result
 				: Result.Fail<PartOfSpeech>(
-					$"The part of speech ({partOfSpeech}) is not one of the defined parts of speech");
+					$"The part of speech ({partOfSpeech}) is not one of the defined parts of speech.");
 	}
 
 	private static Result<SKImage> GetTagCloudImage(string[] words)
@@ -127,12 +135,15 @@ internal class Program
 
 	private static string[] GetWordsFromFile(string path) => File.ReadAllText(path).Split();
 
-	private static Result<None> SaveTagCloudImage(string path, SKImage image, SKEncodedImageFormat format)
+	private static Result<None> SaveTagCloudImage(string path, SKImage image, string format)
 	{
-		using var data = image.Encode(format, 100);
+        if (!Enum.TryParse<SKEncodedImageFormat>(format, out var imageFormat))
+            return Result.Fail<None>("Incorrect image encode format.");
+
+		using var data = image.Encode(imageFormat, 100);
 		using var stream = File.OpenWrite(path);
         if (data is null)
-            return Result.Fail<None>($"Can't encode bitmap into format {Enum.GetName(format)}");
+            return Result.Fail<None>($"Can't encode bitmap into format {format}.");
 
 		data.SaveTo(stream);
         return Result.Ok();
