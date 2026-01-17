@@ -15,7 +15,7 @@ public class CircularCloudLayouter(SKPoint center) : ICloudLayouter
     public Result<SKRect> PutNextRectangle(SKSize rectangleSize)
     {
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-            return Result.Fail<SKRect>("Recatngle size should be greater then zero");
+            return Result.Fail<SKRect>("Recatngle size should be greater then zero.");
 
         var rectangle = FindRectangleWithCorrectPosition(rectangleSize);
         placedRectangles.Add(rectangle);
